@@ -12,7 +12,7 @@ import java.util.Optional;
 
 /**
  * cw-model
- * Stage 1: Complete this class
+ * Stage 1: Complete this class pls
  */
 public final class MyGameStateFactory implements Factory<GameState> {
 
