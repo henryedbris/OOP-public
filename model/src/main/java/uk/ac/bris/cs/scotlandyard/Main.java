@@ -7,7 +7,7 @@ import uk.ac.bris.cs.scotlandyard.ui.Utils;
 import uk.ac.bris.cs.scotlandyard.ui.controller.LocalGameController;
 
 /**
- * Main entry point
+ * Main entry point aoife push
  */
 public final class Main {
 
