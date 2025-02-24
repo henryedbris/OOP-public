@@ -64,7 +64,7 @@ public final class MyGameStateFactory implements Factory<GameState> {
 				@Override
 				public GameState visit(Move.DoubleMove move) {
 					// travel log - update twice
-					// remaining detectives
+					// detectives are remaining
 					return null;
 				}
 			});
