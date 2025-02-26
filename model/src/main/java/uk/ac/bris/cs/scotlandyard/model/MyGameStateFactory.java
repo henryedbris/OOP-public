@@ -60,7 +60,7 @@ public final class MyGameStateFactory implements Factory<GameState> {
 				if (p.has(ScotlandYard.Ticket.SECRET)) throw new IllegalArgumentException("Detective has secret");
 				if (p.has(ScotlandYard.Ticket.DOUBLE)) throw new IllegalArgumentException("Detective has double");
 			}
-
+			if (setup.graph.nodes().isEmpty()) throw new IllegalArgumentException("Graph is empty!");
 		}
 
 		@Override public GameSetup getSetup() {  return setup; }
