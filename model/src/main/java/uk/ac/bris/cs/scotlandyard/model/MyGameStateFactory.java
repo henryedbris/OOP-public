@@ -12,7 +12,7 @@ import java.util.*;
 
 /**
  * cw-model
- * Stage 1: Complete this class pls aoife
+ * Stage 1: Complete this class
  */
 public final class MyGameStateFactory implements Factory<GameState> {
 
@@ -52,36 +52,29 @@ public final class MyGameStateFactory implements Factory<GameState> {
 				}
 			}
 
-
 		}
-
 
 		@Override public GameSetup getSetup() {  return setup; }
 
-		@Override  public ImmutableSet<Piece> getPlayers() { return null; }
+		@Override public ImmutableSet<Piece> getPlayers() { return null; }
 
-		@Nonnull @Override
-		public Optional<Integer> getDetectiveLocation(Piece.Detective detective) {
+		@Nonnull @Override public Optional<Integer> getDetectiveLocation(Piece.Detective detective) {
 			return Optional.empty();
 		}
 
-		@Nonnull @Override
-		public Optional<TicketBoard> getPlayerTickets(Piece piece) {
+		@Nonnull @Override public Optional<TicketBoard> getPlayerTickets(Piece piece) {
 			return Optional.empty();
 		}
 
-		@Nonnull @Override
-		public ImmutableList<LogEntry> getMrXTravelLog() {
+		@Nonnull @Override public ImmutableList<LogEntry> getMrXTravelLog() {
 			return log;
 		}
 
-		@Nonnull @Override
-		public ImmutableSet<Piece> getWinner() {
+		@Nonnull @Override public ImmutableSet<Piece> getWinner() {
 			return null;
 		}
 
-		@Nonnull @Override
-		public ImmutableSet<Move> getAvailableMoves() {
+		@Nonnull @Override public ImmutableSet<Move> getAvailableMoves() {
 			return null;
 		}
 
