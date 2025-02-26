@@ -39,10 +39,10 @@ public final class MyGameStateFactory implements Factory<GameState> {
 			this.detectives = detectives;
 			if(setup.moves.isEmpty()) throw new IllegalArgumentException("Moves is empty!");
 			if(remaining.isEmpty()) throw new IllegalArgumentException("Remaining is empty!");
-			if(log.isEmpty()) throw new IllegalArgumentException("Log is empty!");
 			//if(mrX.isEmpty())throw new IllegalArgumentException("Log is empty!");
-			//if(mrX == null) throw new IllegalArgumentException("MrX is null!");
+			if(mrX == null) throw new IllegalArgumentException("MrX is null!");
 			if(detectives.isEmpty()) throw new IllegalArgumentException("Detectives is empty!");
+			if(log.isEmpty()) throw new IllegalArgumentException("Log is empty!");
 			//else if(detectives==null)throw new IllegalArgumentException("Detectives is null!");
 		}
 
