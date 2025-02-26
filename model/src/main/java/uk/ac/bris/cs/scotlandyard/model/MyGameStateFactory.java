@@ -39,15 +39,25 @@ public final class MyGameStateFactory implements Factory<GameState> {
 			this.detectives = detectives;
 			if(setup.moves.isEmpty()) throw new IllegalArgumentException("Moves is empty!");
 			if(remaining.isEmpty()) throw new IllegalArgumentException("Remaining is empty!");
-			//if(mrX.isEmpty())throw new IllegalArgumentException("Log is empty!");
-			if(mrX == null) throw new IllegalArgumentException("MrX is null!");
 			if(detectives.isEmpty()) throw new IllegalArgumentException("Detectives is empty!");
-			if(log.isEmpty()) throw new IllegalArgumentException("Log is empty!");
-			//else if(detectives==null)throw new IllegalArgumentException("Detectives is null!");
+			if(!mrX.isMrX()) throw new IllegalArgumentException("No MrX");
+			String[] colours = new String[]{"","","","",""};
+			for(Player p : detectives){
+				for(String colour:colours){
+					if(p.piece().webColour().equals(colour)){
+						throw new IllegalArgumentException("Duplicate detective");
+					}else{
+						colour = p.piece().webColour();
+					}
+				}
+			}
+
+
 		}
 
 
 		@Override public GameSetup getSetup() {  return setup; }
+
 		@Override  public ImmutableSet<Piece> getPlayers() { return null; }
 
 		@Nonnull @Override
@@ -62,7 +72,7 @@ public final class MyGameStateFactory implements Factory<GameState> {
 
 		@Nonnull @Override
 		public ImmutableList<LogEntry> getMrXTravelLog() {
-			return null;
+			return log;
 		}
 
 		@Nonnull @Override
