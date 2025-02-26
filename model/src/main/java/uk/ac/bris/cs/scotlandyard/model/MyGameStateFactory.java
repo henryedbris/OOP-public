@@ -8,7 +8,7 @@ import com.google.common.collect.ImmutableSet;
 import uk.ac.bris.cs.scotlandyard.model.Board.GameState;
 import uk.ac.bris.cs.scotlandyard.model.ScotlandYard.Factory;
 
-import java.util.Optional;
+import java.util.*;
 
 /**
  * cw-model
@@ -17,6 +17,15 @@ import java.util.Optional;
 public final class MyGameStateFactory implements Factory<GameState> {
 
 	private final class MyGameState implements GameState {
+
+		private GameSetup setup;
+		private ImmutableSet<Piece> remaining;
+		private ImmutableList<LogEntry> log;
+		private Player mrX;
+		private List<Player> detectives;
+		private ImmutableSet<Move> moves;
+		private ImmutableSet<Piece> winner;
+
 		@Override public GameSetup getSetup() {  return null; }
 		@Override  public ImmutableSet<Piece> getPlayers() { return null; }
 
