@@ -30,7 +30,8 @@ public final class MyGameStateFactory implements Factory<GameState> {
 				final ImmutableSet<Piece> remaining,
 				final ImmutableList<LogEntry> log,
 				final Player mrX,
-				final List<Player> detectives){
+				final List<Player> detectives)
+		{
 			this.setup = setup;
 			this.remaining = remaining;
 			this.log = log;
