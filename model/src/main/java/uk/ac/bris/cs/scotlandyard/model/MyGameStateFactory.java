@@ -39,17 +39,26 @@ public final class MyGameStateFactory implements Factory<GameState> {
 			this.detectives = detectives;
 			if(setup.moves.isEmpty()) throw new IllegalArgumentException("Moves is empty!");
 			if(remaining.isEmpty()) throw new IllegalArgumentException("Remaining is empty!");
-			if(detectives.isEmpty()) throw new IllegalArgumentException("Detectives is empty!");
 			if(!mrX.isMrX()) throw new IllegalArgumentException("No MrX");
-			String[] colours = new String[]{"","","","",""};
+
+			if(detectives.isEmpty()) throw new IllegalArgumentException("Detectives is empty!");
+			String[] colours = new String[detectives.size()];
+			int[] locations = new int[detectives.size()];
 			for(Player p : detectives){
-				for(String colour:colours){
-					if(p.piece().webColour().equals(colour)){
+				for(int i = 0; i < colours.length; i++){
+					if(p.piece().webColour().equals(colours[i])){
 						throw new IllegalArgumentException("Duplicate detective");
 					}else{
-						colour = p.piece().webColour();
+						colours[i] = p.piece().webColour();
+					}
+					if (p.location()==locations[i]){
+						throw new IllegalArgumentException("Duplicate detective location");
+					}else{
+						locations[i] = p.location();
 					}
 				}
+				if (p.has(ScotlandYard.Ticket.SECRET)) throw new IllegalArgumentException("Detective has secret");
+				if (p.has(ScotlandYard.Ticket.DOUBLE)) throw new IllegalArgumentException("Detective has double");
 			}
 
 		}
