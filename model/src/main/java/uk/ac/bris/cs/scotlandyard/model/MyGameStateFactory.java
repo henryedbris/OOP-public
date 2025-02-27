@@ -81,23 +81,29 @@ public final class MyGameStateFactory implements Factory<GameState> {
 		}
 
 		@Nonnull @Override public Optional<TicketBoard> getPlayerTickets(Piece piece) {
+			Player player = null;
 			if(getPlayers().contains(piece)){
-				String colour = piece.webColour();
+
+                String colour = piece.webColour();
+				if(piece.isMrX()) player = mrX;
 				for(Player p : detectives){
 					if(colour.equals(p.piece().webColour())){
-						Player player = p;
+						 player = p;
+						 System.out.print(p.toString());
 					}
 				}
-
+				Player finalPlayer = player;
 				TicketBoard x = new TicketBoard() {
 					@Override public int getCount(@Nonnull ScotlandYard.Ticket ticket) {
-						return 0;
+						int counter = 0;
+						while((finalPlayer.hasAtLeast(ticket,counter))){
+							counter = counter + 1;
+						}
+						counter = counter - 1;
+						return counter;
 					}
 				};
-
 				return Optional.of(x);
-
-
 			}
 			return Optional.empty();
 		}
