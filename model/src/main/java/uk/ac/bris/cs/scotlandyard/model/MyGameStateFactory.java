@@ -83,7 +83,19 @@ public final class MyGameStateFactory implements Factory<GameState> {
 		@Nonnull @Override public Optional<TicketBoard> getPlayerTickets(Piece piece) {
 			if(getPlayers().contains(piece)){
 				String colour = piece.webColour();
+				for(Player p : detectives){
+					if(colour.equals(p.piece().webColour())){
+						Player player = p;
+					}
+				}
 
+				TicketBoard x = new TicketBoard() {
+					@Override public int getCount(@Nonnull ScotlandYard.Ticket ticket) {
+						return 0;
+					}
+				};
+
+				return Optional.of(x);
 
 
 			}
