@@ -30,24 +30,23 @@ public final class MyGameStateFactory implements Factory<GameState> {
 				final ImmutableSet<Piece> remaining,
 				final ImmutableList<LogEntry> log,
 				final Player mrX,
-				final List<Player> detectives)
-		{
+				final List<Player> detectives) {
 			this.setup = setup;
 			this.remaining = remaining;
 			this.log = log;
 			this.mrX = mrX;
 			this.detectives = detectives;
+
 			if(setup.moves.isEmpty()) throw new IllegalArgumentException("Moves is empty!");
 			if(remaining.isEmpty()) throw new IllegalArgumentException("Remaining is empty!");
 			if(!mrX.isMrX()) throw new IllegalArgumentException("No MrX");
-
 			if(detectives.isEmpty()) throw new IllegalArgumentException("Detectives is empty!");
 			String[] colours = new String[detectives.size()];
 			int[] locations = new int[detectives.size()];
 			for(Player p : detectives){
 				for(int i = 0; i < colours.length; i++){
 					if(p.piece().webColour().equals(colours[i])){
-						throw new IllegalArgumentException("Duplicate detective");
+						throw new IllegalArgumentException("Duplicate detectives");
 					}else{
 						colours[i] = p.piece().webColour();
 					}
@@ -65,9 +64,19 @@ public final class MyGameStateFactory implements Factory<GameState> {
 
 		@Override public GameSetup getSetup() {  return setup; }
 
-		@Override public ImmutableSet<Piece> getPlayers() { return null; }
+		@Override public ImmutableSet<Piece> getPlayers() {
+			List<Piece> pieces = new ArrayList<>();
+			for (Player p : detectives){
+				pieces.add(p.piece());
+			}
+			pieces.add(mrX.piece());
+			return ImmutableSet.copyOf(pieces);
+		}
 
 		@Nonnull @Override public Optional<Integer> getDetectiveLocation(Piece.Detective detective) {
+			for (Player p : detectives) {
+				if (p.piece().equals(detective)) return Optional.of(p.location());
+			}
 			return Optional.empty();
 		}
 
