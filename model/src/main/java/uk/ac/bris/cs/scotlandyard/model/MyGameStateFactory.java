@@ -81,6 +81,12 @@ public final class MyGameStateFactory implements Factory<GameState> {
 		}
 
 		@Nonnull @Override public Optional<TicketBoard> getPlayerTickets(Piece piece) {
+			if(getPlayers().contains(piece)){
+				String colour = piece.webColour();
+
+
+
+			}
 			return Optional.empty();
 		}
 
