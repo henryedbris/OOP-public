@@ -94,9 +94,9 @@ public final class MyGameStateFactory implements Factory<GameState> {
 					@Override public int getCount(@Nonnull ScotlandYard.Ticket ticket) {
 						int counter = 0;
 						while(finalPlayer.hasAtLeast(ticket,counter)){
-							counter += 1;
+							counter = counter + 1;
 						}
-						counter -= 1;
+						counter = counter - 1;
 						return counter;
 					}
 				};
