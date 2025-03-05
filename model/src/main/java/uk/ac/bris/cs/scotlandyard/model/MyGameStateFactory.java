@@ -110,13 +110,35 @@ public final class MyGameStateFactory implements Factory<GameState> {
 		@Nonnull @Override public ImmutableSet<Piece> getWinner() {
 			return null;
 		}
-
+		private static Set<Move.SingleMove> makeSingleMoves(GameSetup setup, List<Player> detectives, Player player, int source){
+			HashSet<Move.SingleMove> moveHashSet = new HashSet<Move.SingleMove>();
+			for(int destination : setup.graph.adjacentNodes(source)) {
+				// TODO find out if destination is occupied by a detective
+				//  if the location is occupied, don't add to the collection of moves to return
+				for (Player p : detectives) {
+					if (p.location() != destination) {
+						for (ScotlandYard.Transport t : setup.graph.edgeValueOrDefault(source, destination, ImmutableSet.of())) {
+							// TODO find out if the player has the required tickets
+							//  if it does, construct a SingleMove and add it the collection of moves to return
+							if (player.has(t.requiredTicket())) {
+								moveHashSet.add(new Move.SingleMove(player.piece(), source, t.requiredTicket(), destination));
+							}
+							if(player.isMrX() && player.has(ScotlandYard.Ticket.SECRET)){
+								moveHashSet.add(new Move.SingleMove(player.piece(), source, ScotlandYard.Ticket.SECRET, destination));
+							}
+						}
+					}
+				}
+			}
+			return moveHashSet;
+		}
 		@Nonnull @Override public ImmutableSet<Move> getAvailableMoves() {
+			makeSingleMoves(setup,detectives,detectives.get(0),67);
 			return null;
 		}
 
-		@Override public GameState advance(Move move) {
 
+		@Override public GameState advance(Move move) {
 			return move.accept(new Move.Visitor<GameState>() {
 				@Override
 				public GameState visit(Move.SingleMove move) {
