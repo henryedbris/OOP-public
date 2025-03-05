@@ -90,16 +90,14 @@ public final class MyGameStateFactory implements Factory<GameState> {
 					}
 				}
 				Player finalPlayer = player;
-				TicketBoard ticketBoard = new TicketBoard() {
-					@Override public int getCount(@Nonnull ScotlandYard.Ticket ticket) {
-						int counter = 0;
-						while(finalPlayer.hasAtLeast(ticket,counter)){
-							counter = counter + 1;
-						}
-						counter = counter - 1;
-						return counter;
-					}
-				};
+				TicketBoard ticketBoard = ticket -> {
+                    int counter = 0;
+                    while(finalPlayer.hasAtLeast(ticket,counter)){
+                        counter = counter + 1;
+                    }
+                    counter = counter - 1;
+                    return counter;
+                };
 				return Optional.of(ticketBoard);
 			}
 			return Optional.empty();
