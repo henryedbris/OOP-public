@@ -143,7 +143,7 @@ public final class MyGameStateFactory implements Factory<GameState> {
 									for(int destination2 : setup.graph.adjacentNodes(destination1)) {
 										for (Player p2 : detectives) {
 											if (p2.location() != destination2) {
-												for (ScotlandYard.Transport t2 : Objects.requireNonNull(setup.graph.edgeValueOrDefault(source, destination2, ImmutableSet.of()))) {
+												for (ScotlandYard.Transport t2 : Objects.requireNonNull(setup.graph.edgeValueOrDefault(destination1, destination2, ImmutableSet.of()))) {
 													if (player.has(t2.requiredTicket())) {
 														ticket2 = t2.requiredTicket();
 														if (ticket1 == ticket2 && player.hasAtLeast(ticket1,2)) {
