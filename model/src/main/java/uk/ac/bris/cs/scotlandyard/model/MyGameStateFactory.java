@@ -128,7 +128,7 @@ public final class MyGameStateFactory implements Factory<GameState> {
 			}
 			return moveHashSet;
 		}
-
+// hello
 		private static Set<Move.DoubleMove> makeDoubleMoves(GameSetup setup, List<Player> detectives, Player player, int source){
 			HashSet<Move.DoubleMove> moveHashSet = new HashSet<Move.DoubleMove>();
 			ScotlandYard.Ticket ticket1;
