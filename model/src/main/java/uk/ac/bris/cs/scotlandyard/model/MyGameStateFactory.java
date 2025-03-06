@@ -179,8 +179,15 @@ public final class MyGameStateFactory implements Factory<GameState> {
 		}
 
 		@Nonnull @Override public ImmutableSet<Move> getAvailableMoves() {
-			makeSingleMoves(setup,detectives,detectives.get(0),67);
-			return null;
+			HashSet<Move> moves = new HashSet<>();
+
+			for(Player p: detectives) {
+				moves.addAll(makeSingleMoves(setup, detectives, p, p.location()));
+				moves.addAll(makeDoubleMoves(setup, detectives, p, p.location()));
+			}
+				moves.addAll(makeSingleMoves(setup, detectives, mrX, mrX.location()));
+				moves.addAll(makeDoubleMoves(setup, detectives, mrX, mrX.location()));
+			return ImmutableSet.copyOf(moves);
 		}
 
 

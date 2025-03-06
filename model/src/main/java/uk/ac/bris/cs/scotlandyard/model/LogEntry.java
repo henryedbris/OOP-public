@@ -46,8 +46,7 @@ public final class LogEntry implements Serializable {
 	/**
 	 * @return the location in this log entry, empty means MrX's location is hidden
 	 */
-	public Optional<Integer> location() {
-		return location == HIDDEN ? Optional.empty() : Optional.of(location);
+	public Optional<Integer> location() {return location == HIDDEN ? Optional.empty() : Optional.of(location);
 	}
 	@Override public boolean equals(Object o) {
 		if (this == o) return true;
