@@ -115,11 +115,11 @@ public final class MyGameStateFactory implements Factory<GameState> {
 			for(int destination : setup.graph.adjacentNodes(source)) {
 				for (Player p : detectives) {
 					if (p.location() != destination) {
-						for (ScotlandYard.Transport t : setup.graph.edgeValueOrDefault(source, destination, ImmutableSet.of())) {
+						for (ScotlandYard.Transport t : Objects.requireNonNull(setup.graph.edgeValueOrDefault(source, destination, ImmutableSet.of()))) {
 							if (player.has(t.requiredTicket())) {
 								moveHashSet.add(new Move.SingleMove(player.piece(), source, t.requiredTicket(), destination));
 							}
-							if(player.isMrX() && player.has(ScotlandYard.Ticket.SECRET) && t.requiredTicket() != ScotlandYard.Ticket.SECRET){
+							if(player.isMrX() && player.has(ScotlandYard.Ticket.SECRET)){
 								moveHashSet.add(new Move.SingleMove(player.piece(), source, ScotlandYard.Ticket.SECRET, destination));
 							}
 						}
@@ -133,33 +133,30 @@ public final class MyGameStateFactory implements Factory<GameState> {
 			HashSet<Move.DoubleMove> moveHashSet = new HashSet<Move.DoubleMove>();
 			ScotlandYard.Ticket ticket1;
 			ScotlandYard.Ticket ticket2;
-			boolean isFerry1 = false;
-			boolean isFerry2 = false;
 			if (player.has(ScotlandYard.Ticket.DOUBLE)) {
 				for(int destination1 : setup.graph.adjacentNodes(source)) {
 					for (Player p : detectives) {
 						if (p.location() != destination1) { //find valid destinations for move1
-							for (ScotlandYard.Transport t : setup.graph.edgeValueOrDefault(source, destination1, ImmutableSet.of())) {
+							for (ScotlandYard.Transport t : Objects.requireNonNull(setup.graph.edgeValueOrDefault(source, destination1, ImmutableSet.of()))) {
 								if (player.has(t.requiredTicket())) {
 									ticket1 = t.requiredTicket();
-									if (ticket1 == ScotlandYard.Ticket.SECRET) isFerry1 = true;
 									for(int destination2 : setup.graph.adjacentNodes(destination1)) {
 										for (Player p2 : detectives) {
 											if (p2.location() != destination2) {
-												for (ScotlandYard.Transport t2 : setup.graph.edgeValueOrDefault(source, destination2, ImmutableSet.of())) {
+												for (ScotlandYard.Transport t2 : Objects.requireNonNull(setup.graph.edgeValueOrDefault(source, destination2, ImmutableSet.of()))) {
 													if (player.has(t2.requiredTicket())) {
 														ticket2 = t2.requiredTicket();
-														if (ticket2 == ScotlandYard.Ticket.SECRET) isFerry2 = true;
-														moveHashSet.add(new Move.DoubleMove(player.piece(),source,ticket1,destination1,ticket2,destination2));
+														if (ticket1 == ticket2 && player.hasAtLeast(ticket1,2)) {
+															moveHashSet.add(new Move.DoubleMove(player.piece(),source,ticket1,destination1,ticket2,destination2));
+														}
+														if (ticket1 != ticket2) moveHashSet.add(new Move.DoubleMove(player.piece(),source,ticket1,destination1,ticket2,destination2));
 														if (player.has(ScotlandYard.Ticket.SECRET)) {
 															if (player.hasAtLeast(ScotlandYard.Ticket.SECRET,2)){
-																if (!isFerry1 && !isFerry2){
-																	moveHashSet.add(new Move.DoubleMove(player.piece(),source, ScotlandYard.Ticket.SECRET,destination1, ScotlandYard.Ticket.SECRET,destination2));
-																}
-																if (isFerry1 && !isFerry2) moveHashSet.add(new Move.DoubleMove(player.piece(),source,ticket1,destination1, ScotlandYard.Ticket.SECRET,destination2));
-																if (!isFerry1 && isFerry2) moveHashSet.add(new Move.DoubleMove(player.piece(),source, ScotlandYard.Ticket.SECRET,destination1,ticket2,destination2));
+																moveHashSet.add(new Move.DoubleMove(player.piece(),source, ScotlandYard.Ticket.SECRET,destination1, ScotlandYard.Ticket.SECRET,destination2));
+																moveHashSet.add(new Move.DoubleMove(player.piece(),source,ticket1,destination1, ScotlandYard.Ticket.SECRET,destination2));
+																moveHashSet.add(new Move.DoubleMove(player.piece(),source, ScotlandYard.Ticket.SECRET,destination1,ticket2,destination2));
 															}
-															if (!isFerry1 && !isFerry2) {
+															else{
 																moveHashSet.add(new Move.DoubleMove(player.piece(), source, ScotlandYard.Ticket.SECRET, destination1, ticket2, destination2));
 																moveHashSet.add(new Move.DoubleMove(player.piece(),source,ticket1,destination1, ScotlandYard.Ticket.SECRET,destination2));
 															}
@@ -180,10 +177,8 @@ public final class MyGameStateFactory implements Factory<GameState> {
 
 		@Nonnull @Override public ImmutableSet<Move> getAvailableMoves() {
 			HashSet<Move> moves = new HashSet<>();
-
 			for(Player p: detectives) {
-				moves.addAll(makeSingleMoves(setup, detectives, p, p.location()));
-				moves.addAll(makeDoubleMoves(setup, detectives, p, p.location()));
+				//moves.addAll(makeSingleMoves(setup, detectives, p, p.location()));
 			}
 				moves.addAll(makeSingleMoves(setup, detectives, mrX, mrX.location()));
 				moves.addAll(makeDoubleMoves(setup, detectives, mrX, mrX.location()));
