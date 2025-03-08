@@ -177,9 +177,6 @@ public final class MyGameStateFactory implements Factory<GameState> {
 
 		@Nonnull @Override public ImmutableSet<Move> getAvailableMoves() {
 			HashSet<Move> moves = new HashSet<>();
-			for(Player p: detectives) {
-				//moves.addAll(makeSingleMoves(setup, detectives, p, p.location()));
-			}
 				moves.addAll(makeSingleMoves(setup, detectives, mrX, mrX.location()));
 				moves.addAll(makeDoubleMoves(setup, detectives, mrX, mrX.location()));
 			return ImmutableSet.copyOf(moves);
@@ -187,13 +184,30 @@ public final class MyGameStateFactory implements Factory<GameState> {
 
 
 		@Override public GameState advance(Move move) {
+			ImmutableSet<Move> moves = getAvailableMoves();
+			if(!moves.contains(move)) throw new IllegalArgumentException("Illegal move: "+move);
 			return move.accept(new Move.Visitor<GameState>() {
 				@Override
 				public GameState visit(Move.SingleMove move) {
-					// move.commencedBy();
-					// if mr x do mr x things
-					// if detective remove from remaining give ticket to mr x
-					return null;
+					if(move.commencedBy() == mrX.piece()){
+						mrX = mrX.use(move.ticket);
+						mrX = mrX.at(move.destination);
+						// this works for decreasing the ticket number and that is all
+					}
+					else{
+						for(Piece p : remaining){
+							if(p == move.commencedBy()){
+								for(Player player : detectives){
+									if(player.piece()==p){
+										player = player.use(move.ticket);
+//										need to somehow return a new mygamestate because gamestate is absract
+//										and then change remaining to not have detective who just moved in it 
+									}
+								}
+							}
+						}
+					}
+					return new MyGameState(setup, ImmutableSet.of(Piece.MrX.MRX), ImmutableList.of(), mrX, detectives);
 				}
 
 				@Override
