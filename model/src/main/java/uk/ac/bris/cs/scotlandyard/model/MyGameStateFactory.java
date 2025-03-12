@@ -110,7 +110,29 @@ public final class MyGameStateFactory implements Factory<GameState> {
 		}
 
 		@Nonnull @Override public ImmutableSet<Piece> getWinner() {
-			return null;
+			Set<Piece> winner = new HashSet<>();
+			for(Player d : detectives){
+				if(d.location() == mrX.location()){
+					// this for loop adds all the detectives to the winner set
+					// definitely not reused later
+					for(Player w : detectives){
+						winner.add(w.piece());
+					}
+					return ImmutableSet.copyOf(winner);
+				}
+			}
+			boolean mrXStuck = true;
+			for(Move m : getAvailableMoves()){
+				if(m.commencedBy().equals(mrX.piece())){
+					mrXStuck = false;
+				}
+			}
+			if(mrXStuck){
+				for(Player w : detectives){
+					winner.add(w.piece());
+				}
+			}
+			return ImmutableSet.copyOf(winner);
 		}
 
 		private Set<Move.SingleMove> makeSingleMoves(GameSetup setup, List<Player> detectives, Player player, int source){
@@ -167,6 +189,12 @@ public final class MyGameStateFactory implements Factory<GameState> {
 
 		@Nonnull @Override public ImmutableSet<Move> getAvailableMoves() {
 			HashSet<Move> moves = new HashSet<>();
+			// no valid moves for mrX if game is over
+			for(Player p : detectives){
+				if(p.location() == mrX.location()){
+					return ImmutableSet.copyOf(moves);
+				}
+			}
 			// get available moves for the current round
 			for (Piece r : remaining){
 				for(Player p : detectives){
