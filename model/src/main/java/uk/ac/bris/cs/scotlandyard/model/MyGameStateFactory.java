@@ -145,14 +145,14 @@ public final class MyGameStateFactory implements Factory<GameState> {
 				if (!detectivesCanMove) mrxWins = true;
 			}
 
-			// if no detectives have any tickers left then mrx wins
+			// if all detectives have no tickets left then mrx wins
 			boolean detectivesHasTickets = false;
 			for (Player d : detectives){
 				if (hasTickets(d)) detectivesHasTickets = true;
 			}
 			if (!detectivesHasTickets) mrxWins = true;
 
-			// detective wins is mrx is found or mrx has no more available moves
+			// detective wins if mrx is found or mrx has no more available moves
 			if (isMrxCaptured() || !hasMoves(mrX)) detectivesWins = true;
 
 			// if winner is found then end game
