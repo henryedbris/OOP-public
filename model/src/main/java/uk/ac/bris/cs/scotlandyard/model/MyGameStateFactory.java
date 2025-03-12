@@ -109,8 +109,58 @@ public final class MyGameStateFactory implements Factory<GameState> {
 			return log;
 		}
 
+		private boolean hasMoves (Player player){
+			for (Move m : getAvailableMoves()){
+				if (m.commencedBy().equals(player.piece())) return true;
+			}
+			return false;
+		}
+
+		private boolean isMrxCaptured (){
+			for (Player d : detectives){
+				if (d.location() == mrX.location()) return true;
+			}
+			return false;
+		}
+		private boolean hasTickets(Player player) {
+			for (ScotlandYard.Ticket ticket : ScotlandYard.Ticket.values()) {
+				if (player.hasAtLeast(ticket, 1)) {
+					return true;
+				}
+			}
+			return false;
+		}
+
 		@Nonnull @Override public ImmutableSet<Piece> getWinner() {
-			return null;
+			boolean mrxWins = false;
+			boolean detectivesWins = false;
+
+			// mrx wins if log is full and detectives have no more valid moves mrx wins
+			boolean detectivesCanMove = false;
+			if (getMrXTravelLog().size() == getSetup().moves.size()){
+				for (Player d : detectives){
+					if (hasMoves(d)) detectivesCanMove = true;
+					break;
+				}
+				if (!detectivesCanMove) mrxWins = true;
+			}
+
+			// if no detectives have any tickers left then mrx wins
+			boolean detectivesHasTickets = false;
+			for (Player d : detectives){
+				if (hasTickets(d)) detectivesHasTickets = true;
+			}
+			if (!detectivesHasTickets) mrxWins = true;
+
+			// detective wins is mrx is found or mrx has no more available moves
+			if (isMrxCaptured() || !hasMoves(mrX)) detectivesWins = true;
+
+			// if winner is found then end game
+			if (detectivesWins || mrxWins) remaining = ImmutableSet.of();
+
+			if (mrxWins) return ImmutableSet.of(mrX.piece());
+			if (detectivesWins) return ImmutableSet.copyOf(detectives.stream().map(Player::piece).toList());
+			else return ImmutableSet.of();
 		}
 
 		private Set<Move.SingleMove> makeSingleMoves(GameSetup setup, List<Player> detectives, Player player, int source){
@@ -169,8 +219,8 @@ public final class MyGameStateFactory implements Factory<GameState> {
 			HashSet<Move> moves = new HashSet<>();
 			// get available moves for the current round
 			for (Piece r : remaining){
-				for(Player p : detectives){
-					if (p.piece() == r)moves.addAll(makeSingleMoves(setup,detectives,p, p.location()));
+				for(Player d : detectives){
+					if (d.piece() == r)moves.addAll(makeSingleMoves(setup,detectives,d, d.location()));
 				}
 				if (r == mrX.piece()){
 					moves.addAll(makeSingleMoves(setup, detectives, mrX, mrX.location()));
