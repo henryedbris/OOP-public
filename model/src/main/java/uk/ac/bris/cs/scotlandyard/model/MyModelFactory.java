@@ -21,8 +21,7 @@ public final class MyModelFactory implements Factory<Model> {
 		// TODO
 		return new Model() {
 			@Nonnull
-			// Observers -set
-			// Gamestate
+			// Observers set and Gamestate declared as private
 			private Set<Model.Observer> observers = new HashSet<>();
 			private Board.GameState gameState;
 
@@ -33,26 +32,24 @@ public final class MyModelFactory implements Factory<Model> {
 
 			@Override
 			public void registerObserver(@Nonnull Observer observer) {
-				if (observers.contains(observer)) {
-					throw new IllegalArgumentException("Observer already registered");
-				} else if (observer.toString() == null) throw new IllegalArgumentException("Observer cannot be null");
+				//throw error if registering the same observer or null, otherwise adding it to set
+				if (observers.contains(observer)) throw new IllegalArgumentException("Observer already registered");
+				else if (observer.toString() == null) throw new IllegalArgumentException("Observer cannot be null");
 				else observers.add(observer);
-				// add to set
 			}
 
 			@Override
 			public void unregisterObserver(@Nonnull Observer observer) {
-				if (!observers.contains(observer)) {
-					throw new IllegalArgumentException("Observer already registered");
-				} else if (observer.toString() == null) throw new IllegalArgumentException("Observer cannot be null");
+				//throw error if unregistering observer not in set or null, otherwise removing it from set
+				if (observer.toString() == null) throw new IllegalArgumentException("Observer cannot be null");
+				else if (!observers.contains(observer)) throw new IllegalArgumentException("Observer already registered");
 				else observers.remove(observer);
-				// remove from set
 			}
 
 			@Nonnull
 			@Override
 			public ImmutableSet<Observer> getObservers() {
-				// set into immutable set
+				// converting set into immutable set
 				return observers.stream().collect(ImmutableSet.toImmutableSet());
 			}
 
