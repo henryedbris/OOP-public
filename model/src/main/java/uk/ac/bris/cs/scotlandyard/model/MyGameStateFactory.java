@@ -45,6 +45,7 @@ public final class MyGameStateFactory implements Factory<GameState> {
 			if(detectives.isEmpty()) throw new IllegalArgumentException("Detectives is empty!");
 			String[] colours = new String[detectives.size()];
 			int[] locations = new int[detectives.size()];
+			// check if each detective is a valid detective
 			for(Player p : detectives){
 				for(int i = 0; i < colours.length; i++){
 					if(p.piece().webColour().equals(colours[i])){
@@ -84,6 +85,7 @@ public final class MyGameStateFactory implements Factory<GameState> {
 
 		@Nonnull @Override public Optional<TicketBoard> getPlayerTickets(Piece piece) {
 			Player player = null;
+			// find the player the piece belongs to
 			if(getPlayers().contains(piece)){
 				if(piece.isMrX()) player = mrX;
 				for(Player d : detectives){
@@ -92,6 +94,7 @@ public final class MyGameStateFactory implements Factory<GameState> {
 					}
 				}
 				Player finalPlayer = player;
+				// find the number of tickers the player has
 				TicketBoard ticketBoard = ticket -> {
                     int counter = 0;
                     while(finalPlayer.hasAtLeast(ticket,counter)){
@@ -109,19 +112,22 @@ public final class MyGameStateFactory implements Factory<GameState> {
 			return log;
 		}
 
-		private boolean hasMoves (Player player){
+		// check if given piece has moves left
+		private boolean hasMoves (Piece piece){
 			for (Move m : getAvailableMoves()){
-				if (m.commencedBy().equals(player.piece())) return true;
+				if (m.commencedBy().equals(piece)) return true;
 			}
 			return false;
 		}
 
-		private boolean isMrxCaptured (){
+		// check if given location matches any detectives location
+		private boolean equalsDetectivesLocation (int location){
 			for (Player d : detectives){
-				if (d.location() == mrX.location()) return true;
+				if (d.location() == location) return true;
 			}
 			return false;
 		}
+		// check if given player has any tickets left
 		private boolean hasTickets(Player player) {
 			for (ScotlandYard.Ticket ticket : ScotlandYard.Ticket.values()) {
 				if (player.hasAtLeast(ticket, 1)) {
@@ -139,7 +145,7 @@ public final class MyGameStateFactory implements Factory<GameState> {
 			boolean detectivesCanMove = false;
 			if (getMrXTravelLog().size() == getSetup().moves.size()){
 				for (Player d : detectives){
-					if (hasMoves(d)) detectivesCanMove = true;
+					if (hasMoves(d.piece())) detectivesCanMove = true;
 					break;
 				}
 				if (!detectivesCanMove) mrxWins = true;
@@ -152,8 +158,8 @@ public final class MyGameStateFactory implements Factory<GameState> {
 			}
 			if (!detectivesHasTickets) mrxWins = true;
 
-			// detective wins if mrx is found or mrx has no more available moves
-			if (isMrxCaptured() || !hasMoves(mrX)) detectivesWins = true;
+			// detectives wins if mrx is found or mrx has no more available moves
+			if (equalsDetectivesLocation(mrX.location()) || !hasMoves(mrX.piece())) detectivesWins = true;
 
 			// if winner is found then end game
 			if (detectivesWins || mrxWins) remaining = ImmutableSet.of();
@@ -165,17 +171,10 @@ public final class MyGameStateFactory implements Factory<GameState> {
 
 		private Set<Move.SingleMove> makeSingleMoves(GameSetup setup, List<Player> detectives, Player player, int source){
 			HashSet<Move.SingleMove> moveHashSet = new HashSet<Move.SingleMove>();
-
 			for(int destination : setup.graph.adjacentNodes(source)) {
 				// find valid destinations from the source where there is no detective
-				boolean detectiveFound = false;
-				for (Player d : detectives) {
-					if (d.location() == destination) {
-						detectiveFound = true;
-						break;
-					}
-				}
-				if (!detectiveFound){
+				boolean detectiveFound = equalsDetectivesLocation(destination);
+                if (!detectiveFound){
 					// find all possible tickets the player can use to move to the destination
 					for (ScotlandYard.Transport t : Objects.requireNonNull(setup.graph.edgeValueOrDefault(source, destination, ImmutableSet.of()))) {
 						if (player.has(t.requiredTicket())) {
@@ -186,7 +185,6 @@ public final class MyGameStateFactory implements Factory<GameState> {
 							moveHashSet.add(new Move.SingleMove(player.piece(), source, ScotlandYard.Ticket.SECRET, destination));
 						}
 					}
-
 				}
 			}
 			return moveHashSet;
@@ -217,7 +215,7 @@ public final class MyGameStateFactory implements Factory<GameState> {
 
 		@Nonnull @Override public ImmutableSet<Move> getAvailableMoves() {
 			HashSet<Move> moves = new HashSet<>();
-			// get available moves for the current round
+			// get available moves for the current rounds players
 			for (Piece r : remaining){
 				for(Player d : detectives){
 					if (d.piece() == r)moves.addAll(makeSingleMoves(setup,detectives,d, d.location()));
@@ -273,12 +271,15 @@ public final class MyGameStateFactory implements Factory<GameState> {
 							}else updatedDetectives.add(d);
 						}
 						detectives = updatedDetectives;
-						// remove detective from remaining
+						// remove detective from remaining and remove detectives who cannot move
 						remaining = remaining.stream()
+								.filter(piece -> hasMoves(piece))
 								.filter(piece -> !piece.equals(move.commencedBy()))
 								.collect(ImmutableSet.toImmutableSet());
 						// swap to mrX turn if all detectives have moved
-						if (remaining.isEmpty()) remaining = ImmutableSet.of(mrX.piece());
+						if (remaining.isEmpty()){
+							remaining = ImmutableSet.of(mrX.piece());
+						}
 					}
 					return new MyGameState(getSetup(), remaining, log, mrX, detectives);
 				}
@@ -310,8 +311,6 @@ public final class MyGameStateFactory implements Factory<GameState> {
 			Player mrX,
 			ImmutableList<Player> detectives) {
 		return new MyGameState(setup, ImmutableSet.of(Piece.MrX.MRX), ImmutableList.of(), mrX, detectives);
-//		TODO
-//		throw new RuntimeException("Implement me!");
 	}
 
 
