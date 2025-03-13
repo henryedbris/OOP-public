@@ -57,9 +57,17 @@ public final class MyModelFactory implements Factory<Model> {
 			public void chooseMove(@Nonnull Move move) {
 				// advance
 				// move from user interface
-				//gameState.advance(move).getWinner();
+					for (Observer observer : observers) {
+						if (!gameState.advance(move).getWinner().isEmpty()) {
+							observer.onModelChanged(gameState, Observer.Event.GAME_OVER);
+						}
+						else observer.onModelChanged(gameState, Observer.Event.MOVE_MADE);
+					}
 
-			}
+				}
+
+
+
 		};
 	}
 }
