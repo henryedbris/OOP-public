@@ -148,7 +148,9 @@ public final class MyGameStateFactory implements Factory<GameState> {
 					if (hasMoves(d.piece())) detectivesCanMove = true;
 					break;
 				}
-				if (!detectivesCanMove) mrxWins = true;
+				if (!detectivesCanMove){
+					mrxWins = true;
+				}
 			}
 
 			// if all detectives have no tickets left then mrx wins
@@ -156,10 +158,18 @@ public final class MyGameStateFactory implements Factory<GameState> {
 			for (Player d : detectives){
 				if (hasTickets(d)) detectivesHasTickets = true;
 			}
-			if (!detectivesHasTickets) mrxWins = true;
+			if (!detectivesHasTickets) {
+				mrxWins = true;
+			}
 
 			// detectives wins if mrx is found or mrx has no more available moves
-			if (equalsDetectivesLocation(mrX.location()) || !hasMoves(mrX.piece())) detectivesWins = true;
+			if (equalsDetectivesLocation(mrX.location())){
+				detectivesWins = true;
+			}
+			if (remaining.contains(mrX.piece())&&!hasMoves(mrX.piece())) {
+				detectivesWins = true;
+			}
+			//if (equalsDetectivesLocation(mrX.location()) || !hasMoves(mrX.piece())) detectivesWins = true;
 
 			// if winner is found then end game
 			if (detectivesWins || mrxWins) remaining = ImmutableSet.of();

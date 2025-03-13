@@ -18,13 +18,13 @@ public final class MyModelFactory implements Factory<Model> {
 	                                      Player mrX,
 	                                      ImmutableList<Player> detectives) {
 
-		// TODO
 		return new Model() {
 			@Nonnull
 			// Observers set and Gamestate declared as private
-			private Set<Model.Observer> observers = new HashSet<>();
-			private Board.GameState gameState;
+			private Set<Observer> observers = new HashSet<>();
+			private Board.GameState gameState = new MyGameStateFactory().build(setup,mrX,detectives);
 
+			@Nonnull
 			@Override
 			public Board getCurrentBoard() {
 				return gameState;
@@ -50,23 +50,20 @@ public final class MyModelFactory implements Factory<Model> {
 			@Override
 			public ImmutableSet<Observer> getObservers() {
 				// converting set into immutable set
-				return observers.stream().collect(ImmutableSet.toImmutableSet());
+				return ImmutableSet.copyOf(observers);
 			}
 
 			@Override
 			public void chooseMove(@Nonnull Move move) {
 				// advance
 				// move from user interface
-				for (Observer observer : observers) {
-					if (!gameState.advance(move).getWinner().isEmpty()) {
-						observer.onModelChanged(gameState, Observer.Event.GAME_OVER);
-					}
-						else observer.onModelChanged(gameState, Observer.Event.MOVE_MADE);
-					}
-
+				gameState = gameState.advance(move);
+				if (gameState.getWinner().isEmpty()){
+					observers.forEach(observer -> observer.onModelChanged(gameState, Observer.Event.MOVE_MADE));
+				}else {
+					observers.forEach(observer -> observer.onModelChanged(gameState, Observer.Event.GAME_OVER));
 				}
-
-
+			}
 
 		};
 	}
