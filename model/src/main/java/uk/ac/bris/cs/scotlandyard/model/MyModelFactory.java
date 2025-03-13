@@ -3,6 +3,7 @@ package uk.ac.bris.cs.scotlandyard.model;
 import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nonnull;
+import java.util.*;
 
 import com.google.common.collect.ImmutableSet;
 import uk.ac.bris.cs.scotlandyard.model.ScotlandYard.Factory;
@@ -16,23 +17,35 @@ public final class MyModelFactory implements Factory<Model> {
 	@Nonnull @Override public Model build(GameSetup setup,
 	                                      Player mrX,
 	                                      ImmutableList<Player> detectives) {
+
 		// TODO
 		return new Model() {
 			@Nonnull
 			// Observers -set
 			// Gamestate
+			private Set<Model.Observer> observers = new HashSet<>();
+			private Board.GameState gameState;
+
 			@Override
 			public Board getCurrentBoard() {
-				return null;
+				return gameState;
 			}
 
 			@Override
 			public void registerObserver(@Nonnull Observer observer) {
+				if (observers.contains(observer)) {
+					throw new IllegalArgumentException("Observer already registered");
+				} else if (observer.toString() == null) throw new IllegalArgumentException("Observer cannot be null");
+				else observers.add(observer);
 				// add to set
 			}
 
 			@Override
 			public void unregisterObserver(@Nonnull Observer observer) {
+				if (!observers.contains(observer)) {
+					throw new IllegalArgumentException("Observer already registered");
+				} else if (observer.toString() == null) throw new IllegalArgumentException("Observer cannot be null");
+				else observers.remove(observer);
 				// remove from set
 			}
 
@@ -40,13 +53,15 @@ public final class MyModelFactory implements Factory<Model> {
 			@Override
 			public ImmutableSet<Observer> getObservers() {
 				// set into immutable set
-				return null;
+				return observers.stream().collect(ImmutableSet.toImmutableSet());
 			}
 
 			@Override
 			public void chooseMove(@Nonnull Move move) {
 				// advance
 				// move from user interface
+				//gameState.advance(move).getWinner();
+
 			}
 		};
 	}
