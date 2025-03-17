@@ -140,7 +140,6 @@ public final class MyGameStateFactory implements Factory<GameState> {
 		@Nonnull @Override public ImmutableSet<Piece> getWinner() {
 			boolean mrxWins = false;
 			boolean detectivesWins = false;
-
 			// mrx wins if log is full and detectives have no more valid moves mrx wins
 			boolean detectivesCanMove = false;
 			if (getMrXTravelLog().size() == getSetup().moves.size()){
@@ -152,7 +151,6 @@ public final class MyGameStateFactory implements Factory<GameState> {
 					mrxWins = true;
 				}
 			}
-
 			// if all detectives have no tickets left then mrx wins
 			boolean detectivesHasTickets = false;
 			for (Player d : detectives){
@@ -161,19 +159,16 @@ public final class MyGameStateFactory implements Factory<GameState> {
 			if (!detectivesHasTickets) {
 				mrxWins = true;
 			}
-
-			// detectives wins if mrx is found or mrx has no more available moves
+			// detectives wins if mrx is found or mrx
 			if (equalsDetectivesLocation(mrX.location())){
 				detectivesWins = true;
 			}
+			// if its mrx's turn, and he has no more available moves
 			if (remaining.contains(mrX.piece())&&!hasMoves(mrX.piece())) {
 				detectivesWins = true;
 			}
-			//if (equalsDetectivesLocation(mrX.location()) || !hasMoves(mrX.piece())) detectivesWins = true;
-
 			// if winner is found then end game
 			if (detectivesWins || mrxWins) remaining = ImmutableSet.of();
-
 			if (mrxWins) return ImmutableSet.of(mrX.piece());
 			if (detectivesWins) return ImmutableSet.copyOf(detectives.stream().map(Player::piece).toList());
 			else return ImmutableSet.of();
