@@ -20,7 +20,7 @@ public final class MyGameStateFactory implements Factory<GameState> {
 
 	private final class MyGameState implements GameState {
 
-		private GameSetup setup;
+		private final GameSetup setup;
 		private ImmutableSet<Piece> remaining;
 		private ImmutableList<LogEntry> log;
 		private Player mrX;
@@ -65,9 +65,9 @@ public final class MyGameStateFactory implements Factory<GameState> {
 			if (setup.graph.nodes().isEmpty()) throw new IllegalArgumentException("Graph is empty!");
 		}
 
-		@Override public GameSetup getSetup() {  return setup; }
+		@Nonnull @Override public GameSetup getSetup() {  return setup; }
 
-		@Override public ImmutableSet<Piece> getPlayers() {
+		@Nonnull @Override public ImmutableSet<Piece> getPlayers() {
 			List<Piece> pieces = new ArrayList<>();
 			for (Player d : detectives){
 				pieces.add(d.piece());
@@ -242,7 +242,7 @@ public final class MyGameStateFactory implements Factory<GameState> {
 			}
 		}
 
-		@Override public GameState advance(Move move) {
+		@Nonnull @Override public GameState advance(Move move) {
 			int turn = getMrXTravelLog().size();
 			ImmutableSet<Move> moves = getAvailableMoves();
 			if(!moves.contains(move)) throw new IllegalArgumentException("Illegal move: "+move);
