@@ -11,4 +11,6 @@ This project is an implementation of the Scotland Yard board game in Java. It wa
 
 The purpose of the coursework was to assess both object-orientated programming skills and teamwork and was assessed in a viva. 
 
+Most of the work completed is contained in this [file](https://github.com/henryedbris/OOP-public/blob/main/model/src/main/java/uk/ac/bris/cs/scotlandyard/model/MyGameStateFactory.java) as some of the other files were given as skeleton code.
+
 
